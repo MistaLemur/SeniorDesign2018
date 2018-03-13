@@ -162,41 +162,41 @@ void ConfigureADC(void)
 // Function that sets the multiplexer for sensor selection to high. Current pin configuration is P2.3
 void mux_high()
 {
-    P2SEL |= BIT3;
+    P2DIR |= BIT3;
     P2OUT |= BIT3;
 }
 
 // Function that sets the multiplexer for sensor selection to low. Current pin configuration is P2.3
 void mux_low()
 {
-    P2SEL |= BIT3;
+    P2DIR |= BIT3;
     P2OUT &= ~BIT3;
 }
 
 // Function that turns on water pump operation / introduces water to testing chamber. Current pin configuration is P2.4
 void water_pump_on()
 {
-    P2SEL |= BIT4;
+    P2DIR |= BIT4;
     P2OUT |= BIT4;
 }
 
 // Function that turns off water pump operation / stops adding water to testing chamber. Current pin configuration is P2.4
 void water_pump_off()
 {
-    P2SEL |= BIT4;
+    P2DIR |= BIT4;
     P2OUT &= ~BIT4;
 }
 
 // Function that turns on solenoid/opens water drain in the testing chamber. Current pin configuration is P2.5
 void solenoid_on()
 {
-    P2SEL |= BIT5;
+    P2DIR |= BIT5;
     P2OUT |= BIT5;
 }
 
 // Function that turns off solenoid/closes water drain in the testing chamber. Current pin configuration is P2.5
 void solenoid_off()
 {
-    P2SEL |= BIT5;
+    P2DIR |= BIT5;
     P2OUT &= ~BIT5;
 }
