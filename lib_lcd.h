@@ -10,6 +10,8 @@
  *  Author: declis (xdec.de)
  ********************************/ 
 
+#pragma once
+
 #ifndef LIB_LCD_H_
 #define LIB_LCD_H_
 
@@ -17,12 +19,6 @@ struct point3d_schar{schar x,y,z;};
 struct point3d_sint{sint x,y,z;};
 
 extern uchar space_char;			// space between chars
-
-#define CS				0x0010		// chip select at P1.4
-#define SDIN			0x0080		// data in at P1.7
-#define SCLK			0x0020		// clk at P1.5
-#define DC				0x0040		// Data/Cmd at P1.6
-#define RES 			0x0001		// reset at P1.0
 
 #define lcd_width		240
 #define lcd_height		320	
@@ -80,5 +76,12 @@ uchar set_cursor(sint,sint);
 uchar set_cursor_x(sint);
 uchar set_cursor_y(sint);
 void set_instruction(uchar,uchar);
+
+uchar pollTouchScreen(uchar touchCommand);
+
+extern int newTouch;
+extern int touchX, touchY;
+extern long touchTime;
+extern float touchDTime;
 
 #endif /*LIB_LCD_H_*/

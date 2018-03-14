@@ -49,3 +49,144 @@ uint get_abs(sint x)
 	if(x<0) x*=-1;
 	return x;
 }
+
+void intToString(int num, uchar* buffer, int bufferLength){
+    int i=0;
+
+    if(num < 0){
+        buffer[0] = '-';
+        i++;
+        num *= -1;
+    }
+
+    int numCopy = num;
+    int numLength = 0;
+    while(numCopy != 0){
+        numCopy /= 10;
+        numLength++;
+    }
+    if(numLength == 0) numLength = 1;
+
+    i += numLength-1;
+
+    i++;
+    if(i < bufferLength) buffer[i] = 0; //add null terminating char
+    i--;
+
+    int digit = 0;
+    numCopy = num;
+
+    while(digit < numLength){
+        int n = numCopy % 10;
+
+        if(i < bufferLength) buffer[i] ='0' + n;
+
+        numCopy /= 10;
+        i--;
+        digit++;
+    }
+
+}
+
+
+void coordsToString(int x, int y, uchar* buffer, int bufferLength){
+    int i=0;
+
+    if(x < 0){
+        buffer[i] = '-';
+        i++;
+        x *= -1;
+    }
+
+    int numCopy = x;
+    int numLength = 0;
+    while(numCopy != 0){
+        numCopy /= 10;
+        numLength++;
+    }
+    if(numLength == 0) numLength = 1;
+
+    i += numLength-1;
+
+    i++;
+    if(i < bufferLength) buffer[i] = ','; //add null terminating char
+    i--;
+
+    int digit = 0;
+    numCopy = x;
+
+    while(digit < numLength){
+        int n = numCopy % 10;
+
+        if(i < bufferLength) buffer[i] ='0' + n;
+
+        numCopy /= 10;
+        i--;
+        digit++;
+    }
+
+    i = numLength + 1;
+    if(x < 0) i++;
+
+    //y coord
+
+    if(y < 0){
+        buffer[i] = '-';
+        i++;
+        y *= -1;
+    }
+
+    numCopy = y;
+    numLength = 0;
+    while(numCopy != 0){
+        numCopy /= 10;
+        numLength++;
+    }
+    if(numLength == 0) numLength = 1;
+
+    i += numLength-1;
+
+    i++;
+    if(i < bufferLength) buffer[i] = 0; //add null terminating char
+    i--;
+
+    digit = 0;
+    numCopy = y;
+
+    while(digit < numLength){
+        int n = numCopy % 10;
+
+        if(i < bufferLength) buffer[i] ='0' + n;
+
+        numCopy /= 10;
+        i--;
+        digit++;
+    }
+
+
+}
+
+int strLen(char* string, int maxLength){
+    int i = 0;
+    while(string[i] != 0 && i < maxLength){
+        i++;
+    }
+    return i;
+}
+
+void strCat(char* str1, char* str2, int maxLength){ //this funciton concatenates str2 onto str1
+
+    int i = 0;
+    int j = 0;
+    while(i < maxLength && str1[i] != 0){
+        i++;
+    }
+
+    while(j < maxLength && i < maxLength && str2[j] != 0){
+        str1[i] = str2[j];
+        i++;
+        j++;
+    }
+    if(i < maxLength)
+        str1[i] = 0;
+}

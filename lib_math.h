@@ -20,4 +20,10 @@ sint get_sin(sint);
 sint get_cos(sint);
 uint get_abs(sint);
 
+void intToString(int, uchar*, int);
+void coordsToString(int, int, uchar*, int);
+
+int strLen(char* string, int maxLength);
+void strCat(char* str1, char* str2, int maxLength);
+
 #endif /*LIB_MATH_H_*/

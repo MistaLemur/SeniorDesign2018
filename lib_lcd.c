@@ -8,15 +8,17 @@
  *  \//\/_/\/__,_ /\/____/\/____/
  * 
  *  Author: declis (xdec.de)
- ********************************/ 
+ ********************************/
+
 
 #include <msp430g2553.h>
 #include "typedef.h"
 #include "ascii_char.h"
 #include "lib_lcd.h"
 #include "lib_math.h"
-#include "lib_RNG.h"
 #include "delay.h"
+#include "pins.h"
+
 
 uint byte,w_index,h_index;
 uchar bit_num;
@@ -373,7 +375,33 @@ void set_instruction(uchar register_sel, uchar number)
 		P1OUT|=DC;				// data
 	else P1OUT&=~DC;			// command
 	
-	P1OUT&=~CS;					// start condition
-	while(IFG2&UCB0TXIFG);		// TX buffer ready?
+	P1OUT&=~CS;					// start condition. Set SS to low for the LCD to indicate data transfer.
+	P2OUT|=CS2;
+	while(IFG2 & UCB0TXIFG);		// TX buffer ready?
   	UCB0TXBUF=number;			// start transmission
 }
+
+
+uchar pollTouchScreen(uchar touchCommand){
+    //send the command to touch
+    uchar receivedChar=0;
+
+    //set SS to low for the touchscreen controller
+    P2OUT &= ~CS2;
+    P1OUT |= CS;
+
+    while (IFG2 & UCB0TXIFG); // USCI_B0 TX buffer ready?
+    UCB0TXBUF = touchCommand; // Send signal to receive Y position
+
+    P2OUT &= ~CS2;
+    //then wait for buffer
+    while (IFG2 & UCB0RXIFG); // USCI_B0 RX Received?
+    receivedChar = UCB0RXBUF; // Store received data
+
+    P2OUT |= CS2;
+    P1OUT |= CS;
+    //now interpret received data
+    return receivedChar;
+}
+
+

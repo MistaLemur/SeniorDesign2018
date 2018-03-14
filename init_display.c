@@ -14,6 +14,7 @@
 #include "typedef.h"
 #include "lib_lcd.h"
 #include "delay.h"
+#include "pins.h"
 
 // see init_display.h for command description
 const uchar init_cmd[]={0xCB,0xCF,0xE8,0xEA,0xED,0xF7,0xC0,0xC1,0xC5,0xC7,0x36,0x3A,0xB1,0xB6,0xF2,0x26,0xE0,0xE1};
@@ -41,6 +42,7 @@ void init_LCD(uint b_color)
 {
 	uchar byte=0,bit_num=0,h_index=0,w_index=0;
 
+	// toggle the reset pin on/off a few times to reset the LCD
 	P1OUT|=RES;
 	wait_ms(10);
 	P1OUT&=~RES;
@@ -71,20 +73,45 @@ void init_LCD(uint b_color)
 
 void init_USCI(void)
 {
-	P1DIR|=RES+DC+CS;
-	P1OUT&=~RES+DC+CS;
+	P1DIR|=RES+DC+CS;               //setting pins RES DC and CS as outputs
+	P1OUT&=~RES+DC+CS;                  //Setting output pins to 0
+
+	P1SEL|=SDIN+SCLK+SDO;               //Disabling GPIO for SDIN (MISO) and SCLK and SDO (MOSI)
+	P1SEL2|=SDIN+SCLK+SDO;              //Disabling GPIO for SDIN (MISO) and SCLK and SDO (MOSI)
 	
-	P1SEL|=SDIN+SCLK;
-	P1SEL2|=SDIN+SCLK;
-	
-  	UCB0CTL1|=UCSWRST;					// USCI in reset state
+  	UCB0CTL1 |= UCSWRST;					// USCI in reset state
   	// SPI Master, 8bit, MSB first, synchronous mode
-  	UCB0CTL0|=UCMST+UCSYNC+UCCKPH+UCMSB;		
-  	UCB0CTL1|=UCSSEL_2;					// USCI CLK-SRC=SMCLK=~8MHz
-  	UCB0CTL1&=~UCSWRST;					// USCI released for operation
+  	UCB0CTL0 |= UCMST + UCSYNC + UCCKPH + UCMSB; //3 pin 8 bit spi masster
+  	UCB0CTL1 |= UCSSEL_2;					// USCI CLK-SRC=SMCLK=~8MHz
+  	UCB0CTL1 &= ~UCSWRST;					// USCI released for operation
   	IE2|=UCB0TXIE;						// enable TX interrupt
+    IE2|=UCB0RXIE;                      // enable RX interrupt
+
   	IFG2&=~UCB0TXIFG;
+    IFG2&=~UCB0RXIFG;
+
   	_EINT();							// enable interrupts
+}
+
+void init_touchScreen(void){
+    //Initialize touchscreen stuff
+    P2IE &= 0x00;
+    P2IES &= 0x00;
+    P2REN &= 0x00;
+    P2OUT &= 0x00;
+
+    P2OUT &= 0x00;
+    P2DIR &= 0x00;
+    P2DIR |= CS2;                   // initialize CS2 pins
+
+    //initialize Port2 interrupt
+    P2REN |= IRQ;            //Enable internal pull-up/down resistors
+    P2OUT |= IRQ;           //Select pull-up mode for IRQ
+
+    P2IFG &= ~IRQ;          //Clear IRQ interrupt flag
+    //P2IES &= ~IRQ;           //lo>hi edge
+    P2IES |= IRQ;           //hi>lo edge
+    P2IE |= IRQ;            //Enable interrupt vector
 }
 
 #pragma INTERRUPT (USCI)
@@ -92,5 +119,32 @@ void init_USCI(void)
 void USCI(void)
 {
 	P1OUT|=CS;				// transmission done
+	P2OUT|=CS2;
 	IFG2&=~UCB0TXIFG;		// clear TXIFG
+    IFG2&=~UCB0RXIFG;       // clear RXIFG
 }	
+
+#pragma INTERRUPT (USCI2)
+#pragma vector=USCIAB0RX_VECTOR
+void USCI2(void)
+{
+    P1OUT|=CS;              // transmission done
+    P2OUT|=CS2;
+    IFG2&=~UCB0TXIFG;       // clear TXIFG
+    IFG2&=~UCB0RXIFG;       // clear RXIFG
+}
+
+//Port 2 service interrupt
+#pragma vector=PORT2_VECTOR
+__interrupt void Port_2(void)
+{
+    //poll x and y
+    //take note of the time
+    if(P2IFG & IRQ){
+        newTouch = 1;
+    }
+
+    P2IFG &= ~IRQ;
+
+    __bis_SR_register(GIE);
+}

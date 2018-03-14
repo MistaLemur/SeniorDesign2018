@@ -10,11 +10,14 @@
  *  Author: declis (xdec.de)
  ********************************/ 
 
+#pragma once
+
 #ifndef INIT_DISPLAY_H_
 #define INIT_DISPLAY_H_
 
 void init_LCD(uint);
 void init_USCI(void);
+
 
 /*
 	set_instruction(0,0xCB);	// POWER CONTROL A
