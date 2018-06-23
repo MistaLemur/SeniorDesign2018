@@ -8,6 +8,9 @@
  *  \//\/_/\/__,_ /\/____/\/____/
  * 
  *  Author: declis (xdec.de)
+ 
+ Modified by: Anthony SuVasquez
+ Added a poll touchscreen function for reading X and Y coordinates from a touchscreen when someone touches it.
  ********************************/
 
 
