@@ -1,13 +1,5 @@
 /*******************************
- *          __                   
- *         /\ \                  
- *  __  _  \_\ \     __    ___   
- * /\ \/'\ /'_' \  /'__'\ /'___\ 
- * \/>  <//\ \ \ \/\  __//\ \__/ 
- *  /\_/\_\ \___,_\ \____\ \____\
- *  \//\/_/\/__,_ /\/____/\/____/
- * 
- *  Author: declis (xdec.de)
+* Author: Anthony SuVasquez
  ********************************/ 
 
 #include <msp430g2553.h>
@@ -50,7 +42,7 @@ void main(void)
 {
 	WDTCTL = WDTPW+WDTHOLD;		//stop watchdog timer
 	BCSCTL1 = CALBC1_16MHZ;		// SMCLK=~16MHz   setting clock BCSCTL1
-  	DCOCTL = CALDCO_16MHZ;      //setting clock DCOCTL1
+  	DCOCTL = CALDCO_16MHZ;      	//setting clock DCOCTL1
   	
   	init_USCI();				// init. USCI (SPI)
   	init_LCD(C_BLACK);			// init. Display
@@ -153,11 +145,12 @@ void main(void)
         //orpState = poll_ORP();
         //turbState = poll_turb();
 
-        if(newTouch){// && (touchTime < timer || (touchTime == timer && dtime - touchDTime >= touchDelay))){
+        if(newTouch){
             //poll the touch sensor...
 
             newTouch = 0;
 
+	    //If the on-screen button was pressed and the system is idle, activate the plasma system.
             if(plasmaState == 0 && pollingState == 0){
                 touchTime = timer;
                 touchDTime = dtime;
@@ -172,7 +165,8 @@ void main(void)
 
 
         if(plasmaState != 0){
-
+	    //Run the plasma and update the on-screen timer showing how much time is left
+		
             float percent = (timer - touchTime + dtime - touchDTime) * 100.0 / plasmaStateDelay;
 
             if(lastPlasmaPercent != percent && percent >= 0 && percent <= 100){
@@ -216,6 +210,8 @@ void main(void)
 
         //polling
         if(pollingState > 0){
+	    //After plasma has been run, start polling water quality and update the sensor readouts.
+	    //Then determine if the water is safe to drink based on ORP and turbidity readings.
             pollingState--;
 
             if(pollingState % 2){
@@ -225,9 +221,7 @@ void main(void)
             }
 
             if(pollingState == 0){
-                //drain testing thing for 4 seconds
                 ADC_off();
-                //init_USCI();
 
                 drawPurificationButtonPressed(buttonX, buttonY, buttonWidth, buttonHeight,  "...Draining...");
                 water_pump_off();
@@ -280,16 +274,6 @@ void main(void)
         }
 
         wait_ms(delay * 1000);
-
-        //intToString(timer, buffer, bufferLength);
-        //draw_string(dataX, 300, buffer, fontColor, C_BLACK, 0, 0);
-
-        /*
-        //Idle low-power mode
-        if(plasmaState == 0 && newTouch == 0 && pollingState == 0)
-            __bis_SR_register(CPUOFF + GIE); //Enter low power mode for MSP430; this is cancelled when certain events occur
-        */
-
     }
 }
 
