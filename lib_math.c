@@ -8,12 +8,19 @@
  *  \//\/_/\/__,_ /\/____/\/____/
  * 
  *  Author: declis (xdec.de)
+ 
+ Mofieid by Anthony SuVasquez
+ My modifications include:
+ intToString() and coordsToString().
+ These functions convert integers to string and XY coordinates to a string.
+ 
+ I wrote these because for some reason, the IDE would not import atoc().
  ********************************/ 
 
 #include "typedef.h"
 #include "lib_math.h"
 
-// sin(x)*100 (0 - 90°)		
+// sin(x)*100 (0 - 90Â°)		
 const uchar sine_array[]={0,1,3,5,6,8,10,12,13,15,17,19,20,22,24,25,27,29,30,32,34,35,37,39,40,42,
 						43,45,46,48,50,51,52,54,55,57,58,60,61,62,64,65,66,68,69,70,71,73,74,75,76,
 						77,78,79,80,81,82,83,84,85,86,87,88,89,89,90,91,92,92,93,93,94,95,95,96,96,
@@ -32,13 +39,13 @@ sint get_sin(sint x)
 	// normalize x value
 	if(x<0) x=360-(get_abs(x)%360);
 	else x%=360;
-	// 0° - 90°
+	// 0Â° - 90Â°
 	if(x<=90) return sine_array[x];
-	// 91° - 180°
+	// 91Â° - 180Â°
 	else if(x>90&&x<=180) return sine_array[180-x];	
-	// 181° - 270°
+	// 181Â° - 270Â°
 	else if(x>180&&x<=270) return -sine_array[90-(270-x)];
-	// 271° - 360°
+	// 271Â° - 360Â°
 	else return -sine_array[360-x];
 }
 
