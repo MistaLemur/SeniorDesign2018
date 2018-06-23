@@ -1,4 +1,8 @@
+/*
+Author: Anthony SuVasquez
 
+This contains all the pin definitions on the same file.
+*/
 #ifndef PINS_H_
 #define PINS_H_
 
