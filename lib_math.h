@@ -8,6 +8,8 @@
  *  \//\/_/\/__,_ /\/____/\/____/
  * 
  *  Author: declis (xdec.de)
+ 
+Modified by Anthony SuVasquez
  ********************************/ 
 
 #ifndef LIB_MATH_H_
