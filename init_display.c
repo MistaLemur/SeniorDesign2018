@@ -8,6 +8,14 @@
  *  \//\/_/\/__,_ /\/____/\/____/
  * 
  *  Author: declis (xdec.de)
+ 
+ Modified by: Anthony SuVasquez. 
+ My modifications include: 
+ adding the interrupt vector on port 2 for touch events.
+ adding interrupt vectors for SPI communications for touchscreen polling.
+ changing SPI pins for touchscreen drawing.
+ modifying intialization functions to support a second set of SPI pins and interrupts
+ modififying initialization functions to create the new interrupt vectors.
  ********************************/ 
 
 #include <msp430g2553.h>
