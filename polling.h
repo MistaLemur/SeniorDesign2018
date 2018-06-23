@@ -1,8 +1,5 @@
 /*
- * polling.h
- *
- *  Created on: Mar 13, 2018
- *      Author: Admin
+Author: Anthony SuVasquez
  */
 
 #ifndef POLLING_H_
