@@ -1,3 +1,6 @@
+/*
+Author: Anthony SuVasquez
+*/
 #include <msp430.h>
 #include <stdio.h>
 
@@ -24,19 +27,7 @@ unsigned int orpIndex = 0;
 long orpSum = 0;
 
 
-/*
-void main(void)
-{
-    P3SEL = 0;                  // I just did this cuz the console recommended to set unused ports to 0
-    int turb_reading = 0;       // Initialize turbidity sensor variable to be used in microcontroller operations
-    int ORP_reading = 0;        // Initialize ORP sensor variable to be used in microcontroller operations
-
-    turb_reading = run_turb();  // Run turbidity ADC polling, apply moving average filter to array, and return average turbidity value
-    ORP_reading = run_ORP();    // Run ORP ADC polling, apply moving average filter to array, and return average ORP value
-}
-*/
-
-int poll_turb(){ //This polls the turbidity function and returns the new turbidity average in terms of NTUs
+int poll_turb(){ //This polls the turbidity sensor and returns the new turbidity average in terms of NTUs
     mux_low();
 
     if(++numTurbSamples > maxSamples) numTurbSamples = maxSamples;
@@ -47,12 +38,7 @@ int poll_turb(){ //This polls the turbidity function and returns the new turbidi
     if(++turbIndex >= maxSamples) turbIndex = 0;
 
     //conversion function
-    //idfk what do here LOL
     avg = (int) (avg * ADCconversion);
-
-    //There has to be a lookup table here to convert between polling voltage and NTU.
-    //this needs to be somewhat empirically determined unfortunately...
-
 
     return avg;
 }
@@ -76,7 +62,7 @@ int poll_ORP(){ //This polls the ORP and returns the ORP value in terms of milli
 
 
 
-//Function that applies moving average filter to a 1D array of samples. Function is based off this example: https://gist.github.com/bmccormack/d12f4bf0c96423d03f82
+//Function that applies moving average filter to a 1D array of samples.
 int movingAvg(int *ptrArrNumbers, long *sum, unsigned int pos, int len, int nextNum)
 {
     //Subtract the oldest number from the prev sum, add the new number
